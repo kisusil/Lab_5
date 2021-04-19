@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'ru.kisusil'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.8'
+}
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "ru.kisusil.icecreamrose.Main"
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+application {
+    mainClassName = "ru.kisusil.icecreamrose.Main"
+}
+run {
+    standardInput = System.in
+}

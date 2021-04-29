@@ -1,1 +1,13 @@
-execute_script 2.txt
+add
+remove_by_id 1
+show
+info
+help
+count_by_mood
+clear
+add_if_max
+filter_greater_than_mood
+history
+print_ascending
+save
+execute_script

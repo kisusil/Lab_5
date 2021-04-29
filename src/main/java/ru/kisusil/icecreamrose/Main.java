@@ -5,9 +5,13 @@ import ru.kisusil.icecreamrose.controller.MyController;
 import ru.kisusil.icecreamrose.model.ApplicationContext;
 import ru.kisusil.icecreamrose.model.HumanBeingCreator;
 import ru.kisusil.icecreamrose.model.HumanBeingRepository;
+import ru.kisusil.icecreamrose.model.magic.*;
 import ru.kisusil.icecreamrose.view.MyApplication;
 import ru.kisusil.icecreamrose.view.Console;
 import ru.kisusil.icecreamrose.view.IO;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
     public static void main (String[] args){
@@ -18,9 +22,29 @@ public class Main {
 
         HumanBeingRepository humanBeingRepository = new HumanBeingRepository();
         HumanBeingCreator humanBeingCreator = new HumanBeingCreator();
-        ApplicationContext applicationContext = new ApplicationContext(humanBeingCreator, humanBeingRepository, io);
+
+        ApplicationContext applicationContext = new ApplicationContext(humanBeingCreator, humanBeingRepository);
         Controller controller = new MyController(applicationContext);
-        MyApplication myApplication = new MyApplication(io, applicationContext, controller);
+
+        Map <String, Magic> magics = new HashMap<>();
+        magics.put("add", new AddMagic(applicationContext));
+        magics.put("clear", new ClearMagic(applicationContext));
+        magics.put("executeScript", new ExecuteScriptMagic(controller));
+        magics.put("help", new HelpMagic(applicationContext));
+        magics.put("info", new InfoMagic(applicationContext));
+        magics.put("removeById", new RemoveByIdMagic(applicationContext));
+        magics.put("removeLower", new RemoveLowerMagic(applicationContext));
+        magics.put("save", new SaveMagic(applicationContext));
+        magics.put("show", new ShowMagic(applicationContext));
+        magics.put("update", new UpdateMagic(applicationContext));
+        magics.put("addIfMax", new AddIfMaxMagic (applicationContext));
+        magics.put("countByMood", new CountByMoodMagic(applicationContext));
+        magics.put("filterGreaterThanMood", new FilterGreaterThanMoodMagic (applicationContext));
+        magics.put("printAscending", new PrintAscendingMagic(applicationContext));
+
+        applicationContext.setMagics(magics);
+
+        MyApplication myApplication = new MyApplication(io, controller);
 
         myApplication.start();
     }

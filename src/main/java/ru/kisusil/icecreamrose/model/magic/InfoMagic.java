@@ -2,6 +2,7 @@ package ru.kisusil.icecreamrose.model.magic;
 
 import ru.kisusil.icecreamrose.model.ApplicationContext;
 import ru.kisusil.icecreamrose.model.CollectionInfo;
+import ru.kisusil.icecreamrose.model.Parameters;
 
 public class InfoMagic implements Magic {
     private final ApplicationContext applicationContext;
@@ -11,8 +12,8 @@ public class InfoMagic implements Magic {
     }
 
     @Override
-    public void execute () {
+    public String execute (Parameters parameters) {
         CollectionInfo collectionInfo = applicationContext.getRepository().getInfo();
-        applicationContext.getIo().println(collectionInfo.toString());
+        return collectionInfo.toString();
     }
 }

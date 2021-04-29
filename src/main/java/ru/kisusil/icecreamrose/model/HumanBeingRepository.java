@@ -1,10 +1,8 @@
 package ru.kisusil.icecreamrose.model;
 
 import ru.kisusil.icecreamrose.model.humanbeing.HumanBeing;
-
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 public class HumanBeingRepository implements Repository {
     private CollectionInfo collectionInfo;
@@ -45,8 +43,10 @@ public class HumanBeingRepository implements Repository {
         return null;
     }
 
-    public Collection<HumanBeing> getAll() {
-        return linkedHashSet;
+    public List<HumanBeing> getAll() {
+        List<HumanBeing> humanBeingList = new ArrayList<>(linkedHashSet);
+        Collections.sort(humanBeingList);
+        return humanBeingList;
     }
 
     public CollectionInfo getInfo() {

@@ -1,5 +1,8 @@
 package ru.kisusil.icecreamrose.model.magic;
 
+import ru.kisusil.icecreamrose.model.Parameters;
+
 public interface Magic {
-    void execute ();
+    String execute (Parameters parameters);
+
 }

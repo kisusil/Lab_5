@@ -2,7 +2,7 @@ package ru.kisusil.icecreamrose.model.humanbeing;
 
 import java.time.LocalDateTime;
 
-public class HumanBeing {
+public class HumanBeing implements Comparable<HumanBeing> {
         private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
         private String name; //Поле не может быть null, Строка не может быть пустой
         private Coordinates coordinates; //Поле не может быть null
@@ -27,6 +27,11 @@ public class HumanBeing {
                 this.weaponType = weaponType;
                 this.mood = mood;
                 this.car = car;
+        }
+
+        @Override
+        public int compareTo(HumanBeing o) {
+                return (int) (this.getImpactSpeed() - o.getImpactSpeed());
         }
 
         public int getId() {

@@ -1,7 +1,7 @@
 package ru.kisusil.icecreamrose.controller;
 
 import ru.kisusil.icecreamrose.model.ApplicationContext;
-import ru.kisusil.icecreamrose.model.magic.*;
+import ru.kisusil.icecreamrose.model.Parameters;
 import ru.kisusil.icecreamrose.model.humanbeing.Car;
 import ru.kisusil.icecreamrose.model.humanbeing.Coordinates;
 import ru.kisusil.icecreamrose.model.humanbeing.Mood;
@@ -16,96 +16,148 @@ public class MyController implements Controller {
 
 
     @Override
-    public void add(String name, Coordinates coordinates, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, Car car) {
-        AddMagic addMagic = new AddMagic(applicationContext, name, coordinates, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, car);
-        addMagic.execute();
+    public String add (String name, Coordinates coordinates, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, Car car) {
+        Parameters parameters = new Parameters();
 
+        parameters.name = name;
+        parameters.car = car;
+        parameters.coordinates = coordinates;
+        parameters.realHero = realHero;
+        parameters.hasToothpick = hasToothpick;
+        parameters.impactSpeed = impactSpeed;
+        parameters.minutesOfWaiting = minutesOfWaiting;
+        parameters.weaponType = weaponType;
+        parameters.mood = mood;
+
+        return applicationContext.getMagics().get("add").execute(parameters);
     }
 
     @Override
-    public void clear() {
-        ClearMagic clearMagic = new ClearMagic(applicationContext);
-        clearMagic.execute();
+    public String clear() {
+        Parameters parameters = new Parameters();
 
+        return applicationContext.getMagics().get("clear").execute(parameters);
     }
 
     @Override
-    public void executeScript(String fileName) {
-        ExecuteScriptMagic executeScriptMagic= new ExecuteScriptMagic(applicationContext, fileName);
-        executeScriptMagic.execute();
+    public String executeScript(String fileName) {
+        Parameters parameters = new Parameters();
 
+        parameters.fileName = fileName;
 
+        return applicationContext.getMagics().get("executeScript").execute(parameters);
     }
 
     @Override
-    public void info() {
-        InfoMagic infoMagic = new InfoMagic(applicationContext);
-        infoMagic.execute();
+    public String info() {
+        Parameters parameters = new Parameters();
 
+        return applicationContext.getMagics().get("info").execute(parameters);
     }
 
     @Override
-    public void removeById(int id) {
-        RemoveByIdMagic removeByIdMagic = new RemoveByIdMagic(applicationContext, id);
-        removeByIdMagic.execute();
+    public String  removeById(int id) {
+        Parameters parameters = new Parameters();
 
+        parameters.id = id;
+
+        return applicationContext.getMagics().get("removeById").execute(parameters);
     }
 
     @Override
-    public void removeLower() {
-        RemoveLowerMagic removeLowerMagic = new RemoveLowerMagic(applicationContext);
-        removeLowerMagic.execute();
+    public String removeLower(String name, Coordinates coordinates, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, Car car) {
+        Parameters parameters = new Parameters();
 
+        parameters.name = name;
+        parameters.car = car;
+        parameters.coordinates = coordinates;
+        parameters.realHero = realHero;
+        parameters.hasToothpick = hasToothpick;
+        parameters.impactSpeed = impactSpeed;
+        parameters.minutesOfWaiting = minutesOfWaiting;
+        parameters.weaponType = weaponType;
+        parameters.mood = mood;
+
+        return applicationContext.getMagics().get("removeLower").execute(parameters);
     }
 
     @Override
-    public void save() {
-        SaveMagic saveMagic = new SaveMagic(applicationContext);
-        saveMagic.execute();
+    public String save() {
+        Parameters parameters = new Parameters();
 
+        return applicationContext.getMagics().get("save").execute(parameters);
     }
 
     @Override
-    public void show() {
-        ShowMagic showMagic = new ShowMagic(applicationContext);
-        showMagic.execute();
+    public String show() {
+        Parameters parameters = new Parameters();
 
+        return applicationContext.getMagics().get("show").execute(parameters);
     }
 
     @Override
-    public void update(int id, String name, Integer coordinateX, double coordinateY, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, String carName) {
-        UpdateMagic updateMagic = new UpdateMagic(applicationContext, id, name, coordinateX, coordinateY, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, carName);
-        updateMagic.execute();
+    public String update(int id, String name, Integer coordinateX, double coordinateY, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, String carName) {
+        Parameters parameters = new Parameters();
+
+        parameters.id = id;
+        parameters.name = name;
+        parameters.carName = carName;
+        parameters.coordinateX = coordinateX;
+        parameters.coordinateY = coordinateY;
+        parameters.realHero = realHero;
+        parameters.hasToothpick = hasToothpick;
+        parameters.impactSpeed = impactSpeed;
+        parameters.minutesOfWaiting = minutesOfWaiting;
+        parameters.weaponType = weaponType;
+        parameters.mood = mood;
+
+        return applicationContext.getMagics().get("update").execute(parameters);
     }
 
     @Override
-    public void addIfMax() {
+    public String addIfMax(String name, Coordinates coordinates, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, Car car) {
+        Parameters parameters = new Parameters();
 
+        parameters.name = name;
+        parameters.car = car;
+        parameters.coordinates = coordinates;
+        parameters.realHero = realHero;
+        parameters.hasToothpick = hasToothpick;
+        parameters.impactSpeed = impactSpeed;
+        parameters.minutesOfWaiting = minutesOfWaiting;
+        parameters.weaponType = weaponType;
+        parameters.mood = mood;
+
+        return applicationContext.getMagics().get("addIfMax").execute(parameters);
     }
 
     @Override
-    public void countByMood() {
+    public String countByMood(Mood mood) {
+        Parameters parameters = new Parameters();
+        parameters.mood = mood;
 
+        return applicationContext.getMagics().get("countByMood").execute(parameters);
     }
 
     @Override
-    public void filterGreaterThanMood() {
+    public String filterGreaterThanMood(Mood mood) {
+        Parameters parameters = new Parameters();
+        parameters.mood = mood;
 
+        return applicationContext.getMagics().get("filterGreaterThanMood").execute(parameters);
     }
 
     @Override
-    public void history() {
+    public String printAscending() {
+        Parameters parameters = new Parameters();
 
+        return applicationContext.getMagics().get("printAscending").execute(parameters);
     }
 
     @Override
-    public void printAscending() {
+    public String help() {
+        Parameters parameters = new Parameters();
 
-    }
-
-    @Override
-    public void help() {
-        HelpMagic helpMagic = new HelpMagic(applicationContext);
-        helpMagic.execute();
+        return applicationContext.getMagics().get("help").execute(parameters);
     }
 }

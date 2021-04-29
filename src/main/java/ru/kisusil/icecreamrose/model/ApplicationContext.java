@@ -1,25 +1,33 @@
 package ru.kisusil.icecreamrose.model;
 
-import ru.kisusil.icecreamrose.view.IO;
+import ru.kisusil.icecreamrose.model.magic.Magic;
+
+import java.util.Map;
 
 public class ApplicationContext {
-private HumanBeingCreator humanBeingCreator;
-private Repository repository;
-private IO io;
+    private final HumanBeingCreator humanBeingCreator;
+    private final Repository repository;
+    private Map <String, Magic> magics;
 
-    public ApplicationContext(HumanBeingCreator humanBeingCreator, Repository repository, IO io) {
+    public ApplicationContext(HumanBeingCreator humanBeingCreator, Repository repository) {
         this.humanBeingCreator = humanBeingCreator;
         this.repository = repository;
-        this.io = io;
     }
 
-    public HumanBeingCreator getHumanBeingFactory() {
+
+    public void setMagics(Map<String, Magic> magics) {
+        this.magics = magics;
+    }
+
+    public Map<String, Magic> getMagics() {
+        return magics;
+    }
+
+    public HumanBeingCreator getHumanBeingCreator() {
         return humanBeingCreator;
     }
 
     public Repository getRepository() {
         return repository;
     }
-
-    public IO getIo() { return io; }
 }

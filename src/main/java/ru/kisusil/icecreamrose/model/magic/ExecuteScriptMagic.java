@@ -1,81 +1,112 @@
 package ru.kisusil.icecreamrose.model.magic;
 
-import ru.kisusil.icecreamrose.model.ApplicationContext;
+import ru.kisusil.icecreamrose.controller.Controller;
+import ru.kisusil.icecreamrose.model.Parameters;
 import ru.kisusil.icecreamrose.model.humanbeing.Car;
 import ru.kisusil.icecreamrose.model.humanbeing.Coordinates;
 import ru.kisusil.icecreamrose.model.humanbeing.Mood;
 import ru.kisusil.icecreamrose.model.humanbeing.WeaponType;
-import ru.kisusil.icecreamrose.view.Console;
-import ru.kisusil.icecreamrose.view.IO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+import java.util.Stack;
 
 public class ExecuteScriptMagic implements Magic {
-    private final ApplicationContext applicationContext;
-    private final String fileName;
-    public ExecuteScriptMagic(ApplicationContext applicationContext, String fileName) {
-        this.applicationContext = applicationContext;
-        this.fileName = fileName;
+    private final Controller controller;
+    private final Stack <String> stack;
+
+    public ExecuteScriptMagic(Controller controller) {
+        this.controller = controller;
+        this.stack = new Stack<>();
     }
 
-
     @Override
-    public void execute() {
-        try(IO io = new Console(new InputStreamReader(new FileInputStream(fileName), StandardCharsets.UTF_8), System.out)) {
-            while (io.hasNext()) {
-                String line = io.readLine();
+    public String execute(Parameters parameters) {
+        if (!stack.contains(parameters.fileName)) {
+            stack.push(parameters.fileName);
+        }
+        else {
+            return "Обнаружено зацикливание";
+        }
 
-                if (line.equals("add")) {
-                    doAdd(io);
+        try (Scanner scanner = new Scanner(new InputStreamReader(new FileInputStream(parameters.fileName), StandardCharsets.UTF_8))) {
+            String result = "";
+            while (scanner.hasNext()) {
+                String line = scanner.nextLine();
+                if (line.equals("add_if_max")) {
+                   result += doAddIfMax(scanner) + "\n";
+                } else if (line.equals("print_ascending")) {
+                    String printAscending = controller.printAscending();
+                    result += printAscending + "\n";
+                } else if (line.contains("count_by_mood")) {
+                    result += doCountByMood(line) + "\n";
+                } else if (line.contains("filter_greater_than_mood")) {
+                    result += doFilterGreaterThanMood(line) + "\n";
+                } else if (line.equals("add")) {
+                    result += doAdd(scanner) + "\n";
                 } else if (line.equals("clear")) {
-                    ClearMagic clearCommand = new ClearMagic(applicationContext);
-                    clearCommand.execute();
+                    String clear = controller.clear();
+                    result += clear + "\n";
                 } else if (line.equals("info")){
-                    InfoMagic infoCommand = new InfoMagic(applicationContext);
-                    infoCommand.execute();
+                    String info = controller.info();
+                    result += info + "\n";
                 } else if (line.equals("show")) {
-                    ShowMagic showCommand = new ShowMagic(applicationContext);
-                    showCommand.execute();
+                    String show = controller.show();
+                    result += show + "\n";
+                } else if (line.equals("help")) {
+                    String help = controller.help();
+                    result += help + "\n";
                 } else if (line.contains("update")) {
-                    doUpdate(line, io);
+                    result += doUpdate(line, scanner) + "\n";
                 } else if (line.contains("remove_by_id")) {
-                    doRemoveById(line, io);
+                    result += doRemoveById(line) + "\n";
+                } else if (line.contains("remove_lower")) {
+                    result += doRemoveLower(scanner) + "\n";
+                } else if (line.contains("execute_script")){
+                    if (line.length()<16){
+                        throw new ExecuteScriptException("Вы забыли ввести fileName.");
+                    }
+                    String fileName = line.substring(15);
+                    String executeScript = controller.executeScript(fileName);
+                    result += executeScript + "\n";
                 } else {
-                    io.println("Такой команды не существует");
-                    throw new ExecuteScriptException();
+                    throw new ExecuteScriptException("Такой команды не существует");
                 }
             }
-            io.println("Скрипт успешно выполнен");
-        } catch (ExecuteScriptException e){
-            applicationContext.getIo().println("Скрипт содержит ошибки. Выполнение скрипта прервано.");
+            stack.pop();
+            return result;
+        } catch (ExecuteScriptException e) {
+            stack.pop();
+            return "Скрипт содержит ошибки. Выполнение скрипта прервано:\n" + e.getMessage();
         } catch (FileNotFoundException e) {
-            applicationContext.getIo().println("Файл с таким именем не существует");
+            stack.pop();
+            return "Файл с таким именем не существует:\n" + e.getMessage();
         } catch (Exception e) {
-            applicationContext.getIo().println("Непредвиденная ошибка чтения из файла");
+            stack.pop();
+            return "Непредвиденная ошибка чтения из файла:\n" + e.getMessage();
         }
     }
 
-    private String readName(IO io) throws ExecuteScriptException {
-        String line = io.readLine();
+
+    private String readName(Scanner scanner) throws ExecuteScriptException{
+        String line = scanner.nextLine();
         String name;
 
         if (line.isEmpty()) {
-            io.println("Это поле не может быть пустым. Введите name еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле не может быть пустым.");
         }
 
         name = line;
         return name;
     }
 
-    private Boolean readRealHero (IO io) throws ExecuteScriptException {
-        String line = io.readLine();
+    private Boolean readRealHero (Scanner scanner) throws ExecuteScriptException {
+        String line = scanner.nextLine();
         if (line.isEmpty()) {
-            io.println("Это поле не может быть пустым. Пожалуйста, введите realHero еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле не может быть пустым.");
         }
         if (line.equalsIgnoreCase("true")){
             return true;
@@ -83,16 +114,14 @@ public class ExecuteScriptMagic implements Magic {
         if (line.equalsIgnoreCase("false")) {
             return false;
         }
-        io.println("Это поле может принимать значения true или false. Пожалуйста, введите realHero еще раз:");
-        throw new ExecuteScriptException();
+        throw new ExecuteScriptException("Это поле может принимать значения true или false.");
     }
 
 
-    private boolean readHasToothpick (IO io) throws ExecuteScriptException {
-        String line = io.readLine();
+    private boolean readHasToothpick (Scanner scanner) throws ExecuteScriptException {
+        String line = scanner.nextLine();
         if (line.isEmpty()) {
-            io.println("Это поле не может быть пустым. Пожалуйста, введите hasToothpick еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле не может быть пустым.");
         }
         if (line.equalsIgnoreCase("true")){
             return true;
@@ -100,88 +129,83 @@ public class ExecuteScriptMagic implements Magic {
         if (line.equalsIgnoreCase("false")) {
             return false;
         }
-        io.println("Это поле может принимать значения true или false. Пожалуйста, введите hasToothpick еще раз:");
-        throw new ExecuteScriptException();
+        throw new ExecuteScriptException("Это поле может принимать значения true или false.");
+
     }
 
-    private Integer readX (IO io) throws ExecuteScriptException{
-        String line = io.readLine();
-        Integer x;
+    private Integer readX (Scanner scanner) throws ExecuteScriptException{
+        String line = scanner.nextLine();
+        int x;
 
         if (line.isEmpty()) {
-            io.println("Это поле не может быть пустым. Пожалуйста, введите X еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле не может быть пустым.");
         }
 
         try {
             x = Integer.parseInt(line);
         } catch(NumberFormatException e) {
-            io.println("Это поле должно быть целым числом. Пожалуйста, введите x еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле должно быть целым числом.");
         }
 
         if (x < -475 ){
-            io.println("Это поле не может быть < -475. Пожалуйста, введите x еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле не может быть < -475.");
         }
+
         return x;
     }
 
-    private double readY (IO io) throws ExecuteScriptException{
-        String line = io.readLine();
+    private double readY (Scanner scanner) throws ExecuteScriptException{
+        String line = scanner.nextLine();
         double y;
 
         if (line.isEmpty()) {
-            io.println("Это поле не может быть пустым. Пожалуйста, введите Y еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле не может быть пустым.");
         }
 
         try {
             y = Double.parseDouble(line);
         } catch (NumberFormatException e) {
-            io.println("Это поле должно быть дробным числом. Пожалуйста, введите Y еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле должно быть дробным числом.");
         }
 
         if (y < -533) {
-            io.println("Это поле не может быть < -533. Пожалуйста, введите Y еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле не может быть < -533.");
         }
         return y;
     }
 
-    private Float readImpactSpeed (IO io) throws ExecuteScriptException{
-        String line = io.readLine();
+    private Float readImpactSpeed (Scanner scanner) throws ExecuteScriptException{
+        String line = scanner.nextLine();
         float impactSpeed;
         try {
             impactSpeed = Float.parseFloat(line);
         } catch (NumberFormatException e) {
-            io.println("Это поле может принимать дробные или целые числа. Введите impactSpeed еще раз.");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле может принимать дробные или целые числа.");
         }
 
         return impactSpeed;
     }
 
-    private Long readMinutesOfWaiting (IO io) throws ExecuteScriptException{
-        String line = io.readLine();
-        Long minutesOfWaiting;
+    private Long readMinutesOfWaiting (Scanner scanner) throws ExecuteScriptException{
+        String line = scanner.nextLine();
+        long minutesOfWaiting;
+
         if (line.isEmpty()) {
             return null;
         }
+
         try {
             minutesOfWaiting = Long.parseLong(line);
         }
         catch (NumberFormatException e) {
-            io.println("Это поле может принимать только целые числа. Введите minutesOfWaiting еще раз.");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле может принимать только целые числа.");
         }
 
         return minutesOfWaiting;
     }
 
-    private WeaponType readWeaponType (IO io) throws ExecuteScriptException{
-        String line = io.readLine().toUpperCase();
+    private WeaponType readWeaponType (Scanner scanner) throws ExecuteScriptException{
+        String line = scanner.nextLine().toUpperCase();
         WeaponType weaponType;
 
         if (line.isEmpty()) {
@@ -191,16 +215,16 @@ public class ExecuteScriptMagic implements Magic {
         try {
             weaponType = WeaponType.valueOf(line);
         } catch(IllegalArgumentException e) {
-            io.println("Это поле должно принимать одно из значений: AXE, SHOTGUN, KNIFE, MACHINE_GUN. Пожалуйста, введите weaponType еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле должно принимать одно из значений: AXE, SHOTGUN, KNIFE, MACHINE_GUN.");
         }
 
         return weaponType;
     }
 
-    private Mood readMood (IO io) throws ExecuteScriptException{
-        String line = io.readLine().toUpperCase();
+    private Mood readMood (Scanner scanner) throws ExecuteScriptException{
+        String line = scanner.nextLine().toUpperCase();
         Mood mood;
+
         if (line.isEmpty()) {
             return null;
         }
@@ -208,16 +232,15 @@ public class ExecuteScriptMagic implements Magic {
         try {
             mood = Mood.valueOf(line);
         } catch(IllegalArgumentException e) {
-            io.println("Это поле должно принимать одно из значений: SADNESS, LONGING, CALM, FRENZY. Пожалуйста, введите weaponType еще раз:");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Это поле должно принимать одно из значений: SADNESS, LONGING, CALM, FRENZY.");
         }
 
         return mood;
 
     }
 
-    private String readNameCar (IO io){
-        String line = io.readLine();
+    private String readNameCar (Scanner scanner){
+        String line = scanner.nextLine();
         String nameCar;
 
         if (line.isEmpty()) {
@@ -228,91 +251,172 @@ public class ExecuteScriptMagic implements Magic {
         return nameCar;
     }
 
-    private void doAdd(IO io) throws ExecuteScriptException {
-        String name = readName(io);
+    private String doAdd(Scanner scanner) throws ExecuteScriptException {
+        String name = readName(scanner);
 
-        Boolean realHero = readRealHero(io);
+        Boolean realHero = readRealHero(scanner);
 
-        boolean hasToothpick = readHasToothpick(io);
+        boolean hasToothpick = readHasToothpick(scanner);
 
-        float impactSpeed = readImpactSpeed(io);
+        float impactSpeed = readImpactSpeed(scanner);
 
-        Long minutesOfWaiting = readMinutesOfWaiting(io);
+        Long minutesOfWaiting = readMinutesOfWaiting(scanner);
 
-        Integer x = readX(io);
+        Integer x = readX(scanner);
 
-        double y = readY(io);
+        double y = readY(scanner);
 
-        WeaponType weaponType = readWeaponType(io);
+        WeaponType weaponType = readWeaponType(scanner);
 
-        Mood mood = readMood(io);
+        Mood mood = readMood(scanner);
 
-        String nameCar = readNameCar(io);
+        String nameCar = readNameCar(scanner);
 
         Coordinates coordinates = new Coordinates(x,y);
         Car car = new Car(nameCar);
 
-        AddMagic addMagic = new AddMagic(applicationContext, name, coordinates, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, car);
-        addMagic.execute();
+        return controller.add(name, coordinates, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, car);
     }
 
-    private void doUpdate(String line, IO io) throws ExecuteScriptException {
+    private String doUpdate(String line, Scanner scanner) throws ExecuteScriptException {
         int id;
         if (line.length()<8){
-            io.println("Вы забыли ввести id");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Вы забыли ввести id");
         }
+
         String StringId = line.substring(7);
 
         try {
             id = Integer.parseInt(StringId);
         } catch(NumberFormatException e){
-            io.println("Вы ввели id, которое не является числом");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Вы ввели id, которое не является числом");
         }
 
-        String name = readName(io);
+        String name = readName(scanner);
 
-        Boolean realHero = readRealHero(io);
+        Boolean realHero = readRealHero(scanner);
 
-        boolean hasToothpick = readHasToothpick(io);
+        boolean hasToothpick = readHasToothpick(scanner);
 
-        float impactSpeed = readImpactSpeed(io);
+        float impactSpeed = readImpactSpeed(scanner);
 
-        Long minutesOfWaiting = readMinutesOfWaiting(io);
+        Long minutesOfWaiting = readMinutesOfWaiting(scanner);
 
-        Integer x = readX(io);
+        Integer x = readX(scanner);
 
-        double y = readY(io);
+        double y = readY(scanner);
 
-        WeaponType weaponType = readWeaponType(io);
+        WeaponType weaponType = readWeaponType(scanner);
 
-        Mood mood = readMood(io);
+        Mood mood = readMood(scanner);
 
-        String nameCar = readNameCar(io);
+        String nameCar = readNameCar(scanner);
 
-        UpdateMagic updateCommand = new UpdateMagic(applicationContext, id, name, x, y, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, nameCar);
-        updateCommand.execute();
+        return controller.update(id, name, x, y, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, nameCar);
     }
 
-    private void doRemoveById(String line, IO io) throws ExecuteScriptException {
+    private String doRemoveById(String line) throws ExecuteScriptException {
         int id;
         if (line.length()<14){
-            io.println("Вы забыли ввести Id.");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Вы забыли ввести Id.");
         }
 
         String StringId = line.substring(13);
 
         try {
             id = Integer.parseInt(StringId);
-
         } catch(NumberFormatException e){
-            io.println("Id должно быть целым числом.");
-            throw new ExecuteScriptException();
+            throw new ExecuteScriptException("Id должно быть целым числом.");
         }
 
-        RemoveByIdMagic removeByIdCommand = new RemoveByIdMagic(applicationContext,id);
-        removeByIdCommand.execute();
+        return controller.removeById(id);
+    }
+
+    private String doAddIfMax(Scanner scanner) throws ExecuteScriptException {
+        String name = readName(scanner);
+
+        Boolean realHero = readRealHero(scanner);
+
+        boolean hasToothpick = readHasToothpick(scanner);
+
+        float impactSpeed = readImpactSpeed(scanner);
+
+        Long minutesOfWaiting = readMinutesOfWaiting(scanner);
+
+        Integer x = readX(scanner);
+
+        double y = readY(scanner);
+
+        WeaponType weaponType = readWeaponType(scanner);
+
+        Mood mood = readMood(scanner);
+
+        String nameCar = readNameCar(scanner);
+
+        Coordinates coordinates = new Coordinates(x,y);
+        Car car = new Car(nameCar);
+
+        return controller.addIfMax(name, coordinates, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, car);
+    }
+
+    private String doRemoveLower(Scanner scanner) throws ExecuteScriptException {
+        String name = readName(scanner);
+
+        Boolean realHero = readRealHero(scanner);
+
+        boolean hasToothpick = readHasToothpick(scanner);
+
+        float impactSpeed = readImpactSpeed(scanner);
+
+        Long minutesOfWaiting = readMinutesOfWaiting(scanner);
+
+        Integer x = readX(scanner);
+
+        double y = readY(scanner);
+
+        WeaponType weaponType = readWeaponType(scanner);
+
+        Mood mood = readMood(scanner);
+
+        String nameCar = readNameCar(scanner);
+
+        Coordinates coordinates = new Coordinates(x,y);
+        Car car = new Car(nameCar);
+
+        return controller.removeLower(name, coordinates, realHero, hasToothpick, impactSpeed, minutesOfWaiting, weaponType, mood, car);
+    }
+
+    private String  doFilterGreaterThanMood(String line) throws ExecuteScriptException {
+        Mood mood;
+        if (line.length()<25){
+            throw new ExecuteScriptException("Вы забыли ввести Mood.");
+        }
+
+        String StringMood = line.substring(24).toUpperCase();
+
+        try {
+            mood = Mood.valueOf(StringMood);
+        } catch(IllegalArgumentException e) {
+            throw new ExecuteScriptException("Это поле должно принимать одно из значений: SADNESS, LONGING, CALM, FRENZY.");
+        }
+
+        return controller.filterGreaterThanMood(mood);
+    }
+
+    private String doCountByMood(String line) throws ExecuteScriptException{
+        Mood mood;
+        if (line.length()<14){
+            throw new ExecuteScriptException("Вы забыли ввести Mood.");
+        }
+
+        String StringMood = line.substring(13).toUpperCase();
+
+        try {
+            mood = Mood.valueOf(StringMood);
+        } catch(IllegalArgumentException e) {
+            throw new ExecuteScriptException("Это поле должно принимать одно из значений: SADNESS, LONGING, CALM, FRENZY.");
+        }
+
+        return controller.countByMood(mood);
     }
 }

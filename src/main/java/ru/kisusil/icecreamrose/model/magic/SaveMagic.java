@@ -1,6 +1,7 @@
 package ru.kisusil.icecreamrose.model.magic;
 
 import ru.kisusil.icecreamrose.model.ApplicationContext;
+import ru.kisusil.icecreamrose.model.Parameters;
 
 public class SaveMagic implements Magic {
     private final ApplicationContext applicationContext;
@@ -11,7 +12,7 @@ public class SaveMagic implements Magic {
 
 
     @Override
-    public void execute() {
-
+    public String execute(Parameters parameters) {
+        return "Успешное сохранение в файл";
     }
 }

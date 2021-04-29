@@ -1,25 +1,25 @@
 package ru.kisusil.icecreamrose.model.magic;
 
 import ru.kisusil.icecreamrose.model.ApplicationContext;
+import ru.kisusil.icecreamrose.model.Parameters;
 import ru.kisusil.icecreamrose.model.RepositoryException;
 
 public class RemoveByIdMagic implements Magic {
     private final ApplicationContext applicationContext;
-    private int id;
 
-    public RemoveByIdMagic(ApplicationContext applicationContext, int id) {
+    public RemoveByIdMagic(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.id = id;
     }
 
 
     @Override
-    public void execute() {
+    public String execute(Parameters parameters) {
         try {
-            applicationContext.getRepository().delete(id);
+            applicationContext.getRepository().delete(parameters.id);
+            return "Объект успешно удален";
         }
         catch (RepositoryException e){
-            applicationContext.getIo().println("Человека с таким id не существует");
+            return "Человека с таким id не существует";
         }
     }
 }

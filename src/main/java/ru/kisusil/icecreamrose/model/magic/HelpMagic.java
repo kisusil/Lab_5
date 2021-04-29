@@ -1,6 +1,7 @@
 package ru.kisusil.icecreamrose.model.magic;
 
 import ru.kisusil.icecreamrose.model.ApplicationContext;
+import ru.kisusil.icecreamrose.model.Parameters;
 
 public class HelpMagic implements Magic {
     private final ApplicationContext applicationContext;
@@ -10,8 +11,8 @@ public class HelpMagic implements Magic {
     }
 
     @Override
-    public void execute() {
-        applicationContext.getIo().println("help : вывести справку по доступным командам\n" +
+    public String execute(Parameters parameters) {
+        return  "help : вывести справку по доступным командам\n" +
                 "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +
                 "show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
                 "add {element} : добавить новый элемент в коллекцию\n" +
@@ -26,6 +27,6 @@ public class HelpMagic implements Magic {
                 "history : вывести последние 6 команд (без их аргументов)\n" +
                 "count_by_mood mood : вывести количество элементов, значение поля mood которых равно заданному\n" +
                 "filter_greater_than_mood mood : вывести элементы, значение поля mood которых больше заданного\n" +
-                "print_ascending : вывести элементы коллекции в порядке возрастания");
+                "print_ascending : вывести элементы коллекции в порядке возрастания";
     }
 }

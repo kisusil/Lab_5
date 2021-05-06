@@ -1,0 +1,45 @@
+{
+  "collectionInfo": {
+    "type": "LinkedHashSet",
+    "creationDate": "2021-05-06T21:02:32.583",
+    "size": 2
+  },
+  "linkedHashSet": [
+    {
+      "id": 1,
+      "name": "леша",
+      "coordinates": {
+        "x": 1,
+        "y": 1.0
+      },
+      "creationDate": "2021-05-06T21:03:47.373",
+      "realHero": true,
+      "hasToothpick": true,
+      "impactSpeed": 1.0,
+      "minutesOfWaiting": 1,
+      "weaponType": "KNIFE",
+      "mood": "CALM",
+      "car": {
+        "name": "1"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Иляна",
+      "coordinates": {
+        "x": 1,
+        "y": 1.0
+      },
+      "creationDate": "2021-05-06T21:04:47.373",
+      "realHero": true,
+      "hasToothpick": true,
+      "impactSpeed": 1.0,
+      "minutesOfWaiting": 1,
+      "weaponType": "KNIFE",
+      "mood": "CALM",
+      "car": {
+        "name": "1"
+      }
+    }
+  ]
+}

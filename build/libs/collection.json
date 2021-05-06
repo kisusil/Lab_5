@@ -1,0 +1,21 @@
+{
+  "linkedHashSet": [
+    {
+      "id": 1,
+      "name": "Леша",
+      "mood": "CALM",
+      "impactSpee": 19.0
+    },
+    {
+      "id": 10,
+      "name": "Леша",
+      "mood": "CALM",
+      "impactSpee": 19.0
+    }
+  ],
+  "collectionInfo": {
+    "type": "LinkedHashSet",
+    "creationDate": {},
+    "size": 1
+  }
+}

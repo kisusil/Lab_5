@@ -1,30 +1,35 @@
 package ru.kisusil.icecreamrose.model;
 
-import ru.kisusil.icecreamrose.model.magic.Magic;
+import ru.kisusil.icecreamrose.CollectionSaver;
+import ru.kisusil.icecreamrose.model.command.Command;
 
 import java.util.Map;
 
 public class ApplicationContext {
-    private final HumanBeingCreator humanBeingCreator;
+    private final HumanBeingBuilder humanBeingBuilder;
     private final Repository repository;
-    private Map <String, Magic> magics;
+    private Map <String, Command> commands;
+    private final CollectionSaver collectionSaver;
 
-    public ApplicationContext(HumanBeingCreator humanBeingCreator, Repository repository) {
-        this.humanBeingCreator = humanBeingCreator;
+    public ApplicationContext(HumanBeingBuilder humanBeingBuilder, Repository repository, CollectionSaver collectionSaver) {
+        this.humanBeingBuilder = humanBeingBuilder;
         this.repository = repository;
+        this.collectionSaver = collectionSaver;
     }
 
 
-    public void setMagics(Map<String, Magic> magics) {
-        this.magics = magics;
+    public CollectionSaver getCollectionSaver() {
+        return collectionSaver;
     }
 
-    public Map<String, Magic> getMagics() {
-        return magics;
+    public void setCommands(Map<String, Command> commands) {
+        this.commands = commands;
     }
 
-    public HumanBeingCreator getHumanBeingCreator() {
-        return humanBeingCreator;
+    public Map<String, Command> getCommands() { return commands; }
+
+    public HumanBeingBuilder getHumanBeingBuilder() {
+        return humanBeingBuilder;
     }
 
     public Repository getRepository() {

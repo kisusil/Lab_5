@@ -1,7 +1,7 @@
 package ru.kisusil.icecreamrose.controller;
 
 import ru.kisusil.icecreamrose.model.ApplicationContext;
-import ru.kisusil.icecreamrose.model.Parameters;
+import ru.kisusil.icecreamrose.model.command.*;
 import ru.kisusil.icecreamrose.model.humanbeing.Car;
 import ru.kisusil.icecreamrose.model.humanbeing.Coordinates;
 import ru.kisusil.icecreamrose.model.humanbeing.Mood;
@@ -17,7 +17,7 @@ public class MyController implements Controller {
 
     @Override
     public String add (String name, Coordinates coordinates, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, Car car) {
-        Parameters parameters = new Parameters();
+        CreationParameters parameters = new CreationParameters ();
 
         parameters.name = name;
         parameters.car = car;
@@ -29,44 +29,44 @@ public class MyController implements Controller {
         parameters.weaponType = weaponType;
         parameters.mood = mood;
 
-        return applicationContext.getMagics().get("add").execute(parameters);
+        return applicationContext.getCommands().get("add").execute(parameters);
     }
 
     @Override
     public String clear() {
-        Parameters parameters = new Parameters();
+        EmptyParameters parameters = new EmptyParameters();
 
-        return applicationContext.getMagics().get("clear").execute(parameters);
+        return applicationContext.getCommands().get("clear").execute(parameters);
     }
 
     @Override
     public String executeScript(String fileName) {
-        Parameters parameters = new Parameters();
+        ExecuteScriptParameters parameters = new ExecuteScriptParameters();
 
         parameters.fileName = fileName;
 
-        return applicationContext.getMagics().get("executeScript").execute(parameters);
+        return applicationContext.getCommands().get("executeScript").execute(parameters);
     }
 
     @Override
     public String info() {
-        Parameters parameters = new Parameters();
+        EmptyParameters parameters = new EmptyParameters();
 
-        return applicationContext.getMagics().get("info").execute(parameters);
+        return applicationContext.getCommands().get("info").execute(parameters);
     }
 
     @Override
     public String  removeById(int id) {
-        Parameters parameters = new Parameters();
+        IdParameters parameters = new IdParameters();
 
         parameters.id = id;
 
-        return applicationContext.getMagics().get("removeById").execute(parameters);
+        return applicationContext.getCommands().get("removeById").execute(parameters);
     }
 
     @Override
     public String removeLower(String name, Coordinates coordinates, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, Car car) {
-        Parameters parameters = new Parameters();
+        CreationParameters parameters = new CreationParameters();
 
         parameters.name = name;
         parameters.car = car;
@@ -78,26 +78,26 @@ public class MyController implements Controller {
         parameters.weaponType = weaponType;
         parameters.mood = mood;
 
-        return applicationContext.getMagics().get("removeLower").execute(parameters);
+        return applicationContext.getCommands().get("removeLower").execute(parameters);
     }
 
     @Override
     public String save() {
-        Parameters parameters = new Parameters();
+        EmptyParameters parameters = new EmptyParameters();
 
-        return applicationContext.getMagics().get("save").execute(parameters);
+        return applicationContext.getCommands().get("save").execute(parameters);
     }
 
     @Override
     public String show() {
-        Parameters parameters = new Parameters();
+        EmptyParameters parameters = new EmptyParameters();
 
-        return applicationContext.getMagics().get("show").execute(parameters);
+        return applicationContext.getCommands().get("show").execute(parameters);
     }
 
     @Override
     public String update(int id, String name, Integer coordinateX, double coordinateY, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, String carName) {
-        Parameters parameters = new Parameters();
+        UpdateParameters parameters = new UpdateParameters();
 
         parameters.id = id;
         parameters.name = name;
@@ -111,12 +111,12 @@ public class MyController implements Controller {
         parameters.weaponType = weaponType;
         parameters.mood = mood;
 
-        return applicationContext.getMagics().get("update").execute(parameters);
+        return applicationContext.getCommands().get("update").execute(parameters);
     }
 
     @Override
     public String addIfMax(String name, Coordinates coordinates, Boolean realHero, boolean hasToothpick, float impactSpeed, Long minutesOfWaiting, WeaponType weaponType, Mood mood, Car car) {
-        Parameters parameters = new Parameters();
+        CreationParameters parameters = new CreationParameters();
 
         parameters.name = name;
         parameters.car = car;
@@ -128,36 +128,36 @@ public class MyController implements Controller {
         parameters.weaponType = weaponType;
         parameters.mood = mood;
 
-        return applicationContext.getMagics().get("addIfMax").execute(parameters);
+        return applicationContext.getCommands().get("addIfMax").execute(parameters);
     }
 
     @Override
     public String countByMood(Mood mood) {
-        Parameters parameters = new Parameters();
+        MoodParameters parameters = new MoodParameters();
         parameters.mood = mood;
 
-        return applicationContext.getMagics().get("countByMood").execute(parameters);
+        return applicationContext.getCommands().get("countByMood").execute(parameters);
     }
 
     @Override
     public String filterGreaterThanMood(Mood mood) {
-        Parameters parameters = new Parameters();
+        MoodParameters parameters = new MoodParameters();
         parameters.mood = mood;
 
-        return applicationContext.getMagics().get("filterGreaterThanMood").execute(parameters);
+        return applicationContext.getCommands().get("filterGreaterThanMood").execute(parameters);
     }
 
     @Override
     public String printAscending() {
-        Parameters parameters = new Parameters();
+        EmptyParameters parameters = new EmptyParameters();
 
-        return applicationContext.getMagics().get("printAscending").execute(parameters);
+        return applicationContext.getCommands().get("printAscending").execute(parameters);
     }
 
     @Override
     public String help() {
-        Parameters parameters = new Parameters();
+        EmptyParameters parameters = new EmptyParameters();
 
-        return applicationContext.getMagics().get("help").execute(parameters);
+        return applicationContext.getCommands().get("help").execute(parameters);
     }
 }

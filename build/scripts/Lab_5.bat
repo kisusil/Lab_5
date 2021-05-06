@@ -82,7 +82,7 @@ set CMD_LINE_ARGS=%*
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\Lab_5-0.1.jar;%APP_HOME%\lib\commons-csv-1.8.jar
+set CLASSPATH=%APP_HOME%\lib\Lab_5-0.1.jar;%APP_HOME%\lib\gson-2.8.6.jar
 
 @rem Execute Lab_5
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %LAB_5_OPTS%  -classpath "%CLASSPATH%" ru.kisusil.icecreamrose.Main %CMD_LINE_ARGS%

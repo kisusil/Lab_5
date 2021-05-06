@@ -252,6 +252,10 @@ public class MyApplication implements Application{
                 doRemoveLower();
             } else if (line.equals("history")) {
                 doHistory();
+            } else if (line.equals("save")) {
+                String save = controller.save();
+                io.println(save);
+                changeHistory("save");
             } else if (line.equals("exit")) {
                 io.println("Программа завершена");
                 break;

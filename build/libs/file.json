@@ -1,0 +1,27 @@
+{
+  "collectionInfo": {
+    "type": "LinkedHashSet",
+    "creationDate": "2021-05-06T20:55:32.583",
+    "size": 1
+  },
+  "linkedHashSet": [
+    {
+      "id": 1,
+      "name": "леша",
+      "coordinates": {
+        "x": 1,
+        "y": 1.0
+      },
+      "creationDate": "2021-05-06T20:55:47.373",
+      "realHero": true,
+      "hasToothpick": true,
+      "impactSpeed": 1.0,
+      "minutesOfWaiting": 1,
+      "weaponType": "KNIFE",
+      "mood": "CALM",
+      "car": {
+        "name": "1"
+      }
+    }
+  ]
+}

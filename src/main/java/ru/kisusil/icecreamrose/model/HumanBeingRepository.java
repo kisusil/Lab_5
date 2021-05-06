@@ -5,11 +5,17 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class HumanBeingRepository implements Repository {
-    private CollectionInfo collectionInfo;
-    private final LinkedHashSet<HumanBeing> linkedHashSet = new LinkedHashSet<>();
+    private final CollectionInfo collectionInfo;
+    private final LinkedHashSet<HumanBeing> linkedHashSet;
 
     public HumanBeingRepository() {
         collectionInfo = new CollectionInfo("LinkedHashSet", LocalDateTime.now(), 0);
+        linkedHashSet = new LinkedHashSet<>();
+    }
+
+    public HumanBeingRepository(CollectionInfo collectionInfo, LinkedHashSet<HumanBeing> linkedHashSet) {
+        this.collectionInfo = collectionInfo;
+        this.linkedHashSet = linkedHashSet;
     }
 
     public void add(HumanBeing humanBeing) {
